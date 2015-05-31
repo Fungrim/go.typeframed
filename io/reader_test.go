@@ -3,10 +3,10 @@ package io
 import (
 	"github.com/golang/protobuf/proto"
 	// "bitbucket.org/fungrim/typeframed-go"
-	msg "bitbucket.org/fungrim/typeframed-go/test"
-	tfd "bitbucket.org/fungrim/typeframed-go"
-	"testing"
+	tfd "bitbucket.org/fungrim/go.typeframed"
+	msg "bitbucket.org/fungrim/go.typeframed/test"
 	"bytes"
+	"testing"
 	// "fmt"
 	"strconv"
 )
@@ -25,12 +25,12 @@ func TestSimple(t *testing.T) {
 	td := &TestDictionary{}
 	var buff bytes.Buffer
 	writer := NewStreamWriter(&buff, td, nil)
-	tell := &msg.Tell{Msg:proto.String("Hello World!")}
+	tell := &msg.Tell{Msg: proto.String("Hello World!")}
 	err := writer.Write(tell, nil)
 	if err != nil {
 		t.Errorf("failed write with message: %v", err)
 	}
-	rawMsg := buff.Bytes();
+	rawMsg := buff.Bytes()
 	javaRawMsg := []byte{154, 5, 0, 14, 10, 12, 72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100, 33, 0}
 	if !bytes.Equal(rawMsg, javaRawMsg) {
 		t.Errorf("encoding incompatible with java verification")
@@ -49,12 +49,12 @@ func TestSimpleWithChecksum(t *testing.T) {
 	td := &TestDictionary{}
 	var buff bytes.Buffer
 	writer := NewStreamWriter(&buff, td, tfd.Crc32Checksum)
-	tell := &msg.Tell{Msg:proto.String("Hello World!")}
+	tell := &msg.Tell{Msg: proto.String("Hello World!")}
 	err := writer.Write(tell, nil)
 	if err != nil {
 		t.Errorf("failed write with message: %v", err)
 	}
-	rawMsg := buff.Bytes();
+	rawMsg := buff.Bytes()
 	javaRawMsg := []byte{154, 5, 0, 14, 10, 12, 72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100, 33, 8, 0, 0, 0, 0, 254, 202, 192, 107}
 	if !bytes.Equal(rawMsg, javaRawMsg) {
 		t.Errorf("encoding incompatible with java verification")
@@ -74,13 +74,13 @@ func TestSimpleMultiple(t *testing.T) {
 	var buff bytes.Buffer
 	writer := NewStreamWriter(&buff, td, nil)
 	for i := 0; i < 5; i++ {
-		tell := &msg.Tell{Msg:proto.String(strconv.Itoa(i))}
+		tell := &msg.Tell{Msg: proto.String(strconv.Itoa(i))}
 		err := writer.Write(tell, nil)
 		if err != nil {
 			t.Errorf("failed write with message: %v", err)
 		}
 	}
-	rawMsg := buff.Bytes();
+	rawMsg := buff.Bytes()
 	reader := NewStreamReader(bytes.NewReader(rawMsg), td, nil, nil)
 	for i := 0; i < 5; i++ {
 		tell2, err := reader.Read()
@@ -97,12 +97,12 @@ func TestReadPastEnd(t *testing.T) {
 	td := &TestDictionary{}
 	var buff bytes.Buffer
 	writer := NewStreamWriter(&buff, td, nil)
-	tell := &msg.Tell{Msg:proto.String("Hello World!")}
+	tell := &msg.Tell{Msg: proto.String("Hello World!")}
 	err := writer.Write(tell, nil)
 	if err != nil {
 		t.Errorf("failed write with message: %v", err)
 	}
-	rawMsg := buff.Bytes();
+	rawMsg := buff.Bytes()
 	reader := NewStreamReader(bytes.NewReader(rawMsg), td, nil, nil)
 	_, err = reader.Read()
 	if err != nil {

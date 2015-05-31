@@ -1,8 +1,8 @@
 package io
 
 import (
-	"testing"
 	"bytes"
+	"testing"
 )
 
 func TestBufferGrowth(t *testing.T) {

@@ -21,13 +21,13 @@ func Crc32Checksum(bytes []byte) []byte {
 }
 
 type CorruptedChecksumError struct {
-    Msg string
+	Msg string
 }
 
 func (e *CorruptedChecksumError) Error() string {
-    return e.Msg
+	return e.Msg
 }
 
 func NewCorruptedChecksum() error {
 	return &CorruptedChecksumError{"Corrupted checksum"}
-} 
+}

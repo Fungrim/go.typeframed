@@ -19,25 +19,25 @@ type StreamWriter interface {
 }
 
 type NoSuchTypeError struct {
-    Id int
+	Id int
 }
 
 type UnknownMessageError struct {
-    Msg string
+	Msg string
 }
 
 func (e *UnknownMessageError) Error() string {
-    return e.Msg
+	return e.Msg
 }
 
 func (e *NoSuchTypeError) Error() string {
-    return "No such type: " + strconv.Itoa(e.Id)
+	return "No such type: " + strconv.Itoa(e.Id)
 }
 
 func NewNoSuchType(id int) error {
-    return &NoSuchTypeError{id}
+	return &NoSuchTypeError{id}
 }
 
 func NewUnknownMessage(msg string) error {
-    return &UnknownMessageError{msg}
+	return &UnknownMessageError{msg}
 }
