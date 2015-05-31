@@ -1,8 +1,6 @@
 package typeframed
 
-import (
-
-)
+import ()
 
 type HeaderCapture interface {
 	Capture(bytes []byte) error

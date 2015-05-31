@@ -3,5 +3,9 @@ package test;
 message Tell {
 
   required string msg = 1;
+
+  message X { 
+    required int32 id = 2;
+  }
   
 }

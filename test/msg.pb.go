@@ -36,5 +36,21 @@ func (m *Tell) GetMsg() string {
 	return ""
 }
 
+type Tell_X struct {
+	Id               *int32 `protobuf:"varint,2,req,name=id" json:"id,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Tell_X) Reset()         { *m = Tell_X{} }
+func (m *Tell_X) String() string { return proto.CompactTextString(m) }
+func (*Tell_X) ProtoMessage()    {}
+
+func (m *Tell_X) GetId() int32 {
+	if m != nil && m.Id != nil {
+		return *m.Id
+	}
+	return 0
+}
+
 func init() {
 }

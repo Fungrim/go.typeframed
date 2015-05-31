@@ -1,32 +1,32 @@
 package io
 
 import (
-	"github.com/golang/protobuf/proto"
-	tfd "bitbucket.org/fungrim/typeframed-go"
+	"bitbucket.org/fungrim/go.typeframed"
 	"bytes"
-	"io"
 	"errors"
+	"github.com/golang/protobuf/proto"
+	"io"
 )
 
 type StreamReader struct {
-	reader *bytes.Reader
-	dictionary tfd.MessageTypeDictionary
-	header tfd.HeaderCapture
-	chksum tfd.Checksum
+	reader     *bytes.Reader
+	dictionary typeframed.MessageTypeDictionary
+	header     typeframed.HeaderCapture
+	chksum     typeframed.Checksum
 }
 
-func NewStreamReader(reader *bytes.Reader, dictionary tfd.MessageTypeDictionary, header tfd.HeaderCapture, chksum tfd.Checksum) *StreamReader {
+func NewStreamReader(reader *bytes.Reader, dictionary typeframed.MessageTypeDictionary, header typeframed.HeaderCapture, chksum typeframed.Checksum) *StreamReader {
 	return &StreamReader{reader, dictionary, header, chksum}
 }
 
 func (r *StreamReader) Read() (proto.Message, error) {
-	
+
 	// 1: read type
 	typeId, err := readVarint(r.reader)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// 2: read optional header
 	headLen, err := readVarint(r.reader)
 	if err != nil {
@@ -43,14 +43,14 @@ func (r *StreamReader) Read() (proto.Message, error) {
 			return nil, err
 		}
 	}
-	
+
 	// 3: read data length and data
 	msgLen, err := readVarint(r.reader)
 	rawMsg, err := readBytes(r.reader, int(msgLen))
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// 4: read optional checksum
 	cksumLen, err := readVarint(r.reader)
 	if err != nil {
@@ -65,10 +65,10 @@ func (r *StreamReader) Read() (proto.Message, error) {
 		}
 		testChksum := r.chksum(rawMsg)
 		if !bytes.Equal(rawChksum, testChksum) {
-			return nil, tfd.NewCorruptedChecksum()
+			return nil, typeframed.NewCorruptedChecksum()
 		}
 	}
-	
+
 	// 5: create new message and parse
 	msg, err := r.dictionary.NewMessageFromId(int(typeId))
 	if err != nil {
@@ -81,7 +81,7 @@ func (r *StreamReader) Read() (proto.Message, error) {
 
 func readBytes(reader io.Reader, length int) ([]byte, error) {
 	buf := make([]byte, length)
-	_, err := reader.Read(buf) // TODO check len? 
+	_, err := reader.Read(buf) // TODO check len?
 	return buf, err
 }
 
